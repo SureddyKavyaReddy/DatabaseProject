@@ -3,9 +3,9 @@ import bottle
 from dataset import connect
 import configparser
 from bottle import route, run, template, request, redirect
+from sqlalchemy import text
 
-
-app = bottle.default_app()
+app_ContentManagement = bottle.default_app()
 
 # Load database configuration from config.ini
 config = configparser.ConfigParser()
@@ -21,7 +21,30 @@ posts = db['posts']
 @bottle.route('/')
 def index():
     all_users = users.find()
+    all_posts = posts.find()
     return bottle.template('views/index', users=all_users)
+
+@bottle.route('/search')
+def search():
+    query = bottle.request.query.q
+
+    # Search for posts with a matching title
+    matched_posts = posts.find(title={'ilike': f'%{query}%'})
+
+    return bottle.template('search_results', query=query, posts=matched_posts)
+
+
+@bottle.route('/user/<user_id>/post/<post_id>')
+def post_detail(user_id, post_id):
+    # Assuming you have a function to retrieve a post by its ID from the database
+    post = posts.find_one(id=post_id)
+
+    # Check if the post exists
+    if post:
+        return bottle.template('views/post_detail', post=post)
+    else:
+        # Handle the case where the post is not found, you can redirect or display an error
+        bottle.redirect('/user/{}'.format(user_id))  # Redirect to the user's posts page
 
 @bottle.route('/user/<user_id>')
 def user_detail(user_id):

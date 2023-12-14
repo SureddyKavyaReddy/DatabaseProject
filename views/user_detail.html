@@ -8,6 +8,13 @@
     <title>User Detail</title>
 </head>
 <body>
+    <h2>Search Posts</h2>
+    <form action="/search" method="get">
+        <label for="search">Search by Title:</label>
+        <input type="text" name="q" id="search" required>
+        <button type="submit">Search</button>
+    </form>
+
     <h1>User Detail</h1>
     <p>User ID: {{ user['id'] }}</p>
     <p>Username: {{ user['username'] }}</p>
