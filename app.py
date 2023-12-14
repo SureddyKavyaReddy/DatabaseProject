@@ -12,16 +12,15 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 database_url = config['database']['url']
-db = connect(database_url)
+db_Content = connect(database_url)
 
 # Define tables
-users = db['users']
-posts = db['posts']
+users = db_Content['users']
+posts = db_Content['posts']
 
 @bottle.route('/')
 def index():
     all_users = users.find()
-    all_posts = posts.find()
     return bottle.template('views/index', users=all_users)
 
 @bottle.route('/search')
